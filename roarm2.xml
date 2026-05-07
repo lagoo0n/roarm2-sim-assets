@@ -1,0 +1,57 @@
+<mujoco model="roarm_m2">
+  <compiler angle="radian" meshdir="meshes/roarm_m2" autolimits="true"/>
+
+  <option gravity="0 0 -9.81" timestep="0.002"/>
+
+  <asset>
+    <material name="silver" rgba="0.75 0.75 0.75 1"/>
+    <mesh name="base_link_mesh" file="base_link.stl"/>
+    <mesh name="link1_mesh" file="link1.stl"/>
+    <mesh name="link2_mesh" file="link2.stl"/>
+    <mesh name="link3_mesh" file="link3.stl"/>
+    <mesh name="gripper_link_mesh" file="gripper_link.stl"/>
+  </asset>
+
+  <worldbody>
+    <light name="top" pos="0 0 1.5" dir="0 0 -1"/>
+    <geom name="floor" type="plane" size="1 1 0.01" rgba="0.8 0.8 0.8 1"/>
+
+    <body name="base_link" pos="0 0 0">
+      <inertial pos="0.0032 0 0.04" mass="0.2562183" diaginertia="0.00029211 0.00035719 0.000349421"/>
+      <geom name="base_link_geom" type="mesh" mesh="base_link_mesh" material="silver"/>
+
+      <body name="link1" pos="0.0100000008759151 0 0.123059270461044">
+        <joint name="base_link_to_link1" type="hinge" axis="0 0 1" range="-3.1416 3.1416" damping="0.05"/>
+        <inertial pos="0 0 -0.015" mass="0.0729177" diaginertia="4.68465e-05 3.32107e-05 5.01023e-05"/>
+        <geom name="link1_geom" type="mesh" mesh="link1_mesh" material="silver"/>
+
+        <body name="link2" pos="0 0 0" euler="-1.5708 -1.5708 0">
+          <joint name="link1_to_link2" type="hinge" axis="0 0 1" range="-1.5708 1.5708" damping="0.05"/>
+          <inertial pos="0.122 0 0" mass="0.0703216" diaginertia="5.46501e-05 0.000423091 0.000404557"/>
+          <geom name="link2_geom" type="mesh" mesh="link2_mesh" material="silver"/>
+
+          <body name="link3" pos="0.236815132922094 0.0300023995170449 0" euler="0 0 1.5708">
+            <joint name="link2_to_link3" type="hinge" axis="0 0 1" range="-1 2.95" damping="0.05"/>
+            <inertial pos="0.002 -0.13687 0.0059" mass="0.0269773" diaginertia="0.000199591 8.01674e-06 0.000196918"/>
+            <geom name="link3_geom" type="mesh" mesh="link3_mesh" material="silver"/>
+
+            <body name="gripper_link" pos="0.002906 -0.21599 -0.00066683" euler="-1.5708 0 -1.5708">
+              <joint name="link3_to_gripper_link" type="hinge" axis="0 0 1" range="0 1.5" damping="0.05"/>
+              <inertial pos="0.029 0.0027 -0.00078" mass="0.0028708" diaginertia="5.23216e-07 1.82071e-06 1.60231e-06"/>
+              <geom name="gripper_link_geom" type="mesh" mesh="gripper_link_mesh" material="silver"/>
+            </body>
+
+            <body name="hand_tcp" pos="0.002 -0.2802 0" euler="1.5708 0 -1.5708"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <position name="servo_base" joint="base_link_to_link1" kp="20"/>
+    <position name="servo_shoulder" joint="link1_to_link2" kp="20"/>
+    <position name="servo_elbow" joint="link2_to_link3" kp="20"/>
+    <position name="servo_gripper" joint="link3_to_gripper_link" kp="10"/>
+  </actuator>
+</mujoco>
